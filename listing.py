@@ -1,7 +1,6 @@
 # Листинг программы AgroRecognition
 
 # GUI интерфейс
-# filepath: e:\agro\agro_recognition\agro_recognition\gui.py
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
 sys.stderr.reconfigure(encoding='utf-8')
@@ -128,7 +127,7 @@ class AgroRecognitionGUI:
 
     def show_results(self):
         """Открывает окно с результатами анализа."""
-        results_path = os.path.join(os.getcwd(), "data", "classification_map.png")
+        results_path = os.path.join(os.getcwd(), "data", "results", "classification_map.png")
         print(f"Проверка наличия файла результатов: {results_path}")
 
         if os.path.exists(results_path):
@@ -136,8 +135,13 @@ class AgroRecognitionGUI:
             result_window.title("Результаты анализа")
 
             try:
+                from PIL import Image
+                try:
+                    resample = Image.Resampling.LANCZOS
+                except AttributeError:
+                    resample = Image.LANCZOS
                 img = Image.open(results_path)
-                img = img.resize((500, 500), Image.ANTIALIAS)
+                img = img.resize((500, 500), resample)
                 img_tk = ImageTk.PhotoImage(img)
 
                 label_result = tk.Label(result_window, image=img_tk)
@@ -153,7 +157,6 @@ gui = AgroRecognitionGUI(root)
 root.mainloop()
 
 # Модуль обучения модели
-# filepath: e:\agro\agro_recognition\agro_recognition\train_model.py
 import os
 from classification.svm_classifier import train_svm
 
@@ -171,7 +174,6 @@ if not os.path.exists(training_data_path):
 train_svm(features=None, training_data_path=training_data_path)
 
 # Модуль анализа FFT
-# filepath: e:\agro\agro_recognition\agro_recognition\core\fft_analysis.py
 import numpy as np  # type: ignore
 import cv2  # type: ignore
 import sys
@@ -216,7 +218,6 @@ def perform_fft(image):
     return np.array(features)
 
 # Модуль анализа Wavelet
-# filepath: e:\agro\agro_recognition\agro_recognition\core\wavelet_analysis.py
 import pywt
 import numpy as np  # type: ignore
 import cv2  # type: ignore
@@ -248,7 +249,6 @@ def perform_wavelet(image):
     return np.array(features)
 
 # Модуль анализа GLCM
-# filepath: e:\agro\agro_recognition\agro_recognition\core\glcm_analysis.py
 import numpy as np  # type: ignore
 from skimage.feature import graycomatrix, graycoprops  # type: ignore
 import cv2  # type: ignore
@@ -281,7 +281,6 @@ def calculate_glcm_features(image, distances=[5], angles=[0, np.pi/4, np.pi/2, 3
     return features
 
 # Модуль классификации SVM
-# filepath: e:\agro\agro_recognition\agro_recognition\classification\svm_classifier.py
 from sklearn.model_selection import train_test_split  # type: ignore
 from sklearn.svm import SVC  # type: ignore
 from sklearn.metrics import accuracy_score  # type: ignore
@@ -347,7 +346,6 @@ def predict_svm(features, model):
     return predictions
 
 # Основной модуль классификации
-# filepath: e:\agro\agro_recognition\agro_recognition\classification.py
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
 sys.stderr.reconfigure(encoding='utf-8')
@@ -396,19 +394,26 @@ def classify_image(features):
     return classification_map
 
 # Модуль извлечения признаков
-# filepath: e:\agro\agro_recognition\agro_recognition\feature_extraction.py
 from core.fft_analysis import perform_fft
+from core.wavelet_analysis import perform_wavelet
+from core.glcm_analysis import calculate_glcm_features
 
 def extract_features(image, method):
     """Вычисляет признаки на основе выбранного метода."""
     if method == "fft":
         features = perform_fft(image)
         print(f"Признаки, извлечённые методом FFT: {features}")
+    elif method == "wavelet":
+        features = perform_wavelet(image)
+        print(f"Признаки, извлечённые методом Wavelet: {features}")
+    elif method == "glcm":
+        features = calculate_glcm_features(image)
+        print(f"Признаки, извлечённые методом GLCM: {features}")
     else:
-        raise ValueError(f"Метод анализа {method} временно отключён. Используйте только 'fft'.")
+        raise ValueError(f"Метод анализа {method} не поддерживается. Используйте 'fft', 'wavelet' или 'glcm'.")
+    return features
 
 # Основной модуль программы
-# filepath: e:\agro\agro_recognition\agro_recognition\main.py
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
 sys.stderr.reconfigure(encoding='utf-8')
@@ -530,7 +535,6 @@ if __name__ == "__main__":
     main()
 
 # Файл зависимостей
-# filepath: e:\agro\agro_recognition\agro_recognition\requirements.txt
 numpy
 scipy
 opencv-python

@@ -58,7 +58,7 @@ def main():
         sys.exit(1)
 
     # Устанавливаем путь для сохранения карты классификации
-    output_dir = os.path.join(os.getcwd(), "data")  # Сохраняем в папку data
+    output_dir = os.path.join(os.getcwd(), "data", "results")  # Сохраняем в папку data/results
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)  # Создаём папку, если её нет
     args.output = os.path.join(output_dir, "classification_map.png")

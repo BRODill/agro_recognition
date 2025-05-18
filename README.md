@@ -111,12 +111,3 @@ python main.py --method fft data/images/test.jpg --preprocess
 ## Автор
 
 BRODill (Диль Максим), 2025
-
-# Чтобы исправить ошибку git "Author identity unknown", выполните в командной строке:
-
-git config --global user.name "BRODill"
-git config --global user.email "your_email@example.com"
-
-# Замените "your_email@example.com" на ваш реальный email, связанный с GitHub.
-# После этого повторите команду git commit.
-

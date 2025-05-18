@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Agro Recognition",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/main.py",
+            "console": "integratedTerminal",
+            "args": [
+                "data/images/test.jpg",
+                "--method",
+                "fft",
+                "--training_data",
+                "data/training_data/training_data.csv"
+            ],
+            "justMyCode": false
+        }
+    ]
+}
